@@ -1,7 +1,35 @@
-;; smooth-scrolling.el
-;; $Id$
-;; Adam Spiers <emacs-ss@adamspiers.org>
+;;; smooth-scrolling.el --- Make emacs scroll smoothly
+;;
+;; Copywrite (c) 2007-2011 Adamn Spiers
 ;; 
+;; Author: Adam Spiers <emacs-ss@adamspiers.org>
+;;	Jeremy Bondeson <jbondeson@gmail.com>
+;; Adapted-By: Jeremy Bondeson <jbondeson@gmail.com>
+;; URL: http://www.emacswiki.org/cgi-bin/wiki/SmoothScrolling
+;; Version: 1.0.1
+;; Keywords: convenience
+;; GitHub: http://github.com/jbondeson/smooth-scrolling/smooth-scrolling.el
+
+;; This file is not part of GNU Emacs
+
+;;; License:
+;; 
+;; This program is free software; you can redistribute it and/or
+;; modify it under the terms of the GNU General Public License
+;; as published by the Free Software Foundation; either version 2
+;; of the License, or (at your option) any later version.
+;;
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+;;
+;; You should have received a copy of the GNU General Public License
+;; along with this program; if not, write to the Free Software
+;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
+;;; Commentary:
+
 ;; Make emacs scroll smoothly, keeping the point away from the top and
 ;; bottom of the current buffer's window in order to keep lines of
 ;; context around the point visible as much as possible, whilst
@@ -16,16 +44,9 @@
 ;;
 ;; for the gory details.
 ;;
-;;;_* Installation
-;;
-;; Put somewhere on your `load-path' and include
-;;
-;;   (require 'smooth-scrolling)
-;;
-;; in your .emacs initialization file.
-;;
-;;;_* Notes
-;;
+
+;;; Notes:
+
 ;; This only affects the behaviour of the `next-line' and
 ;; `previous-line' functions, usually bound to the cursor keys and
 ;; C-n/C-p, and repeated isearches (`isearch-repeat').  Other methods
@@ -44,27 +65,31 @@
 ;; cause some slight confusion at first, but hopefully it is justified
 ;; by the benefit of automatically ensuring `smooth-scroll-margin'
 ;; lines of context are visible around the point as often as possible.
-;;
-;;;_* TODO
+
+;;; TODO:
 ;;
 ;; - Maybe add option to avoid scroll jumps when point is within
 ;;   margin.
-;; 
-;;;_* Acknowledgements
-;; 
+ 
+;;; Acknowledgements:
+
 ;; Thanks to Mark Hulme-Jones and consolers on #emacs for helping
 ;; debug issues with line-wrapping.
-;; 
-;;;_* License
-;; 
-;; Released under the GNU General Public License v2 or later, with
-;; all rights assigned to the Free Software Foundation.
-;;
 
-;;;_* Code follows
-;;;_ + disable `scroll-margin'
-(setq scroll-margin 0)
+;;; Change Log:
+
+;; 06 Dec 2011 -- v1.0.1
+;;	* Altered structure to conform to package.el standards.
+;;	* Restructured code to group settings changes
+;;	* Set "redisplay-dont-pause" to true.
+;; ?? ??? 2007 -- v1.0.0
+;;      * Original version from Adam Spiers
+
+;;; Code:
+
 ;;;_ + defcustoms
+
+;;;###autoload
 (defcustom smooth-scroll-margin 10
   "Number of lines of visible margin at the top and bottom of a window.
 If the point is within these margins, then scrolling will occur
@@ -88,6 +113,7 @@ See also `smooth-scroll-strict-margins'."
   :type  'integer
   :group 'windows)
 
+;;;###autoload
 (defcustom smooth-scroll-strict-margins t
   "If true, the advice code supporting `smooth-scroll-margin'
 will use `count-screen-lines' to determine the number of
@@ -107,6 +133,7 @@ the point will be allowed to stray into the margin."
   :type  'boolean
   :group 'windows)
 ;;;_ + helper functions
+;;;###autoload
 (defun smooth-scroll-lines-from-window-top ()
   "Work out, using the function indicated by
 `smooth-scroll-strict-margins', what the current screen line is,
@@ -121,6 +148,7 @@ to the top line in the window."
         (t
          (count-lines (window-start) (point)))))
 
+;;;###autoload
 (defun smooth-scroll-lines-from-window-bottom ()
   "Work out, using the function indicated by
 `smooth-scroll-strict-margins', how many screen lines there are
@@ -132,6 +160,7 @@ with 1 referring to the bottom line in the window."
     (count-lines (point) (window-end))))
 ;;;_ + after advice
 
+;;;###autoload
 (defun smooth-scroll-down ()
   "Scroll down smoothly if cursor is within `smooth-scroll-margin'
 lines of the top of the window."
@@ -154,7 +183,8 @@ lines of the top of the window."
       (save-excursion
         (scroll-down
               (1+ (- smooth-scroll-margin lines-from-window-top))))))))
-                            
+
+;;;###autoload
 (defun smooth-scroll-up ()
   "Scroll up smoothly if cursor is within `smooth-scroll-margin'
 lines of the bottom of the window."
@@ -174,15 +204,19 @@ lines of the bottom of the window."
         (scroll-up
          (1+ (- smooth-scroll-margin lines-from-window-bottom))))))))
 
+;;;###autoload
 (defadvice previous-line (after smooth-scroll-down
                             (&optional arg try-vscroll)
                             activate)
   (smooth-scroll-down))
+
+;;;###autoload
 (defadvice next-line (after smooth-scroll-up
                             (&optional arg try-vscroll)
                             activate)
   (smooth-scroll-up))
 
+;;;###autoload
 (defadvice isearch-repeat (after isearch-smooth-scroll
                                  (direction)
                                  activate)
@@ -190,12 +224,11 @@ lines of the bottom of the window."
       (smooth-scroll-up)
     (smooth-scroll-down)))
 
+;;;###autoload
+(progn
+  (setq scroll-margin 0)
+  (setq redisplay-dont-pause t))
+
 ;;;_ + provide
 (provide 'smooth-scrolling)
-
-;;;_* Local emacs variables
-
-;;Local variables:
-;;allout-layout: (0 : -1 0)
-;;mode: allout
-;;End:
+;;; smooth-scrolling.el ends here

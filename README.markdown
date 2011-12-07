@@ -21,7 +21,7 @@ for the gory details.
 ## Installation
 
 Put somewhere on your <tt>load-path</tt> and include
-```Lisp
+```
    (require 'smooth-scrolling)
 ```
  in your initialization file.
