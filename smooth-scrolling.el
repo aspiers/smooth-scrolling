@@ -8,7 +8,7 @@
 ;; URL: http://www.emacswiki.org/cgi-bin/wiki/SmoothScrolling
 ;; Version: 1.0.1
 ;; Keywords: convenience
-;; GitHub: http://github.com/jbondeson/smooth-scrolling/smooth-scrolling.el
+;; GitHub: http://github.com/jbondeson/smooth-scrolling/
 
 ;; This file is not part of GNU Emacs
 
@@ -70,7 +70,10 @@
 ;;
 ;; - Maybe add option to avoid scroll jumps when point is within
 ;;   margin.
- 
+;;
+;; - Minimize the number of autoloads in the file.  Currently
+;;   everything is marked as such.
+
 ;;; Acknowledgements:
 
 ;; Thanks to Mark Hulme-Jones and consolers on #emacs for helping
