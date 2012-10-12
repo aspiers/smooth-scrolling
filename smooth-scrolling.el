@@ -1,11 +1,12 @@
 ;;; smooth-scrolling.el --- Make emacs scroll smoothly
 ;;
 ;; Copywrite (c) 2007-2011 Adamn Spiers
-;; 
-;; Author: Adam Spiers <emacs-ss@adamspiers.org>
-;;	Jeremy Bondeson <jbondeson@gmail.com>
-;; Adapted-By: Jeremy Bondeson <jbondeson@gmail.com>
-;; URL: http://www.emacswiki.org/cgi-bin/wiki/SmoothScrolling
+;;
+;; Filename: smooth-scrolling.el
+;; Description: Make emacs scroll smoothly
+;; Author: Adam Spiers <emacs-ss@adamspiers.org>, Jeremy Bondeson <jbondeson@gmail.com>
+;; Maintainer: Jeremy Bondeson <jbondeson@gmail.com>
+;; URL: http://github.com/jbondeson/smooth-scrolling/
 ;; Version: 1.0.1
 ;; Keywords: convenience
 ;; GitHub: http://github.com/jbondeson/smooth-scrolling/
