@@ -1,15 +1,15 @@
 ;;; smooth-scrolling.el --- Make emacs scroll smoothly
 ;;
-;; Copywrite (c) 2007-2011 Adamn Spiers
+;; Copywrite (c) 2007-2013 Adamn Spiers
 ;;
 ;; Filename: smooth-scrolling.el
 ;; Description: Make emacs scroll smoothly
 ;; Author: Adam Spiers <emacs-ss@adamspiers.org>, Jeremy Bondeson <jbondeson@gmail.com>
-;; Maintainer: Jeremy Bondeson <jbondeson@gmail.com>
-;; URL: http://github.com/jbondeson/smooth-scrolling/
-;; Version: 1.0.1
+;; Maintainer: Adam Spiers <emacs-ss@adamspiers.org>
+;; URL: http://github.com/aspiers/smooth-scrolling/
+;; Version: 1.0.2
 ;; Keywords: convenience
-;; GitHub: http://github.com/jbondeson/smooth-scrolling/
+;; GitHub: http://github.com/aspiers/smooth-scrolling/
 
 ;; This file is not part of GNU Emacs
 
@@ -81,7 +81,9 @@
 ;; debug issues with line-wrapping.
 
 ;;; Change Log:
-
+;; 14 Apr 2013 -- v1.0.2
+;;      * Adam Spiers GitHub account now houses the canonical
+;;        repository.
 ;; 06 Dec 2011 -- v1.0.1
 ;;	* Altered structure to conform to package.el standards.
 ;;	* Restructured code to group settings changes
