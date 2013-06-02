@@ -7,7 +7,7 @@
 ;; Author: Adam Spiers <emacs-ss@adamspiers.org>, Jeremy Bondeson <jbondeson@gmail.com>
 ;; Maintainer: Adam Spiers <emacs-ss@adamspiers.org>
 ;; URL: http://github.com/aspiers/smooth-scrolling/
-;; Version: 1.0.2
+;; Version: 1.0.3
 ;; Keywords: convenience
 ;; GitHub: http://github.com/aspiers/smooth-scrolling/
 
@@ -81,6 +81,10 @@
 ;; debug issues with line-wrapping.
 
 ;;; Change Log:
+;; 02 Jun 2013 -- v1.0.3
+;;      * Fixed Issue #3 where bounds checking was not being performed
+;;        prior to calls to 'count-lines' and 'count-screen-lines'
+;;        functions.
 ;; 14 Apr 2013 -- v1.0.2
 ;;      * Adam Spiers GitHub account now houses the canonical
 ;;        repository.
@@ -146,8 +150,9 @@ the point will be allowed to stray into the margin."
 relative to the top of the window.  Counting starts with 1 referring
 to the top line in the window."
   (interactive)
-  (cond ((= (window-start) (point))
-         ;; In this case, count-screen-lines would return 0, so we override.
+  (cond ((>= (window-start) (point))
+         ;; In this case, count-screen-lines would return 0, or
+         ;; error, so we override.
          1)
         (smooth-scroll-strict-margins
          (count-screen-lines (window-start) (point) 'count-final-newline))
@@ -161,9 +166,14 @@ to the top line in the window."
 between the point and the bottom of the window.  Counting starts
 with 1 referring to the bottom line in the window."
   (interactive)
-  (if smooth-scroll-strict-margins
-      (count-screen-lines (point) (window-end))
-    (count-lines (point) (window-end))))
+  (cond ((<= (window-end) (point))
+         ;; In this case, count-screen-lines would return 0, or
+         ;; error, so we override.
+         1)
+        (smooth-scroll-strict-margins
+         (count-screen-lines (point) (window-end)))
+        (t
+         (count-lines (point) (window-end)))))
 ;;;_ + after advice
 
 ;;;###autoload
