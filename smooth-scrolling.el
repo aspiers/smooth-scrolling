@@ -7,7 +7,7 @@
 ;; Author: Adam Spiers <emacs-ss@adamspiers.org>, Jeremy Bondeson <jbondeson@gmail.com>
 ;; Maintainer: Adam Spiers <emacs-ss@adamspiers.org>
 ;; URL: http://github.com/aspiers/smooth-scrolling/
-;; Version: 1.0.3
+;; Version: 1.0.4
 ;; Keywords: convenience
 ;; GitHub: http://github.com/aspiers/smooth-scrolling/
 
@@ -81,6 +81,10 @@
 ;; debug issues with line-wrapping.
 
 ;;; Change Log:
+;; 19 Dec 2013 -- v1.0.4
+;;      * Disabled scrolling while a keyboard macro is executing in
+;;        order to prevent a premature termination of the macro by
+;;        the mode throwing an error such as "End of Buffer"
 ;; 02 Jun 2013 -- v1.0.3
 ;;      * Fixed Issue #3 where bounds checking was not being performed
 ;;        prior to calls to 'count-lines' and 'count-screen-lines'
