@@ -186,6 +186,9 @@ lines of the top of the window."
    (let ((lines-from-window-top
           (smooth-scroll-lines-from-window-top)))
      (and
+      ;; [GitHub Issue #5] Keyboard macros execute in interactive mode so
+      ;; we need to be careful not to do anything.
+      (not executing-kbd-macro)
       ;; Only scroll down if we're within the top margin
       (<= lines-from-window-top smooth-scroll-margin)
       ;; Only scroll down if we're in the top half of the window
@@ -205,6 +208,9 @@ lines of the top of the window."
   "Scroll up smoothly if cursor is within `smooth-scroll-margin'
 lines of the bottom of the window."
   (and
+   ;; [GitHub Issue #5] Keyboard macros execute in interactive mode so
+   ;; we need to be careful not to do anything.
+   (not executing-kbd-macro)
    ;; Only scroll up if there is buffer below the end of the window.
    (< (window-end) (buffer-end 1))
    (let ((lines-from-window-bottom
