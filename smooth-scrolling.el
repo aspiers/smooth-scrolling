@@ -81,6 +81,12 @@
 ;; debug issues with line-wrapping.
 
 ;;; Change Log:
+;; [DATE] -- [VERSION]
+;;      * Converted to global minor mode "smooth-scrolling-mode". This
+;;        means that simply loading the file no longer enables smooth
+;;        scrolling; you must also enable the mode.
+;;      * Internal code restructuring that should improve some edge
+;;        cases, but otherwise have no user-visible effects.
 ;; 19 Dec 2013 -- v1.0.4
 ;;      * Disabled scrolling while a keyboard macro is executing in
 ;;        order to prevent a premature termination of the macro by
@@ -101,7 +107,26 @@
 
 ;;; Code:
 
+;;;_ + internal variables
+(defvar smooth-scroll-orig-scroll-margin nil)
+
 ;;;_ + defcustoms
+
+(defgroup smooth-scrolling nil
+  "Make emacs scroll smoothly"
+  :group 'convenience)
+
+;;;###autoload
+(define-minor-mode smooth-scrolling-mode
+  "Make emacs scroll smoothly"
+  :init-value nil
+  :global t
+  :group 'smooth-scrolling
+  (if smooth-scrolling-mode
+      (setq smooth-scroll-orig-scroll-margin scroll-margin
+            scroll-margin 0)
+    (setq scroll-margin smooth-scroll-orig-scroll-margin
+          smooth-scroll-orig-scroll-margin nil)))
 
 ;;;###autoload
 (defcustom smooth-scroll-margin 10
@@ -125,7 +150,7 @@ to 5 and `window-height' returning 10 or less).
 
 See also `smooth-scroll-strict-margins'."
   :type  'integer
-  :group 'windows)
+  :group 'smooth-scrolling)
 
 ;;;###autoload
 (defcustom smooth-scroll-strict-margins t
@@ -145,115 +170,137 @@ alternatively you can set this variable to nil so that the advice
 code uses `count-lines', and put up with the fact that sometimes
 the point will be allowed to stray into the margin."
   :type  'boolean
-  :group 'windows)
+  :group 'smooth-scrolling)
+
 ;;;_ + helper functions
-;;;###autoload
-(defun smooth-scroll-lines-from-window-top ()
-  "Work out, using the function indicated by
-`smooth-scroll-strict-margins', what the current screen line is,
-relative to the top of the window.  Counting starts with 1 referring
-to the top line in the window."
+(defmacro smooth-scroll-ignore-scroll-errors (&rest body)
+  "Like `progn', but ignores beginning/end of line errors.
+
+If BODY encounters such an error, further evaluation is stopped
+and this form returns nil. Any other error is raised as normal."
+  (declare (indent 0))
+  `(condition-case err
+       (progn ,@body)
+     (end-of-buffer nil)
+     (beginning-of-buffer nil)
+     (error (signal (car err) (cdr err)))))
+
+(defun smooth-scroll-line-beginning-position ()
+  "Return position at beginning of (logical/visual) line.
+
+If `smooth-scroll-strict-margins' is non-nil, this looks to the
+beginning of the visual line. Otherwise it uses the beginning of
+the logical line."
+  (save-excursion
+    ;; Cannot use `line-beginning-position' here because there is no
+    ;; visual-line equivalent.
+    (funcall (if smooth-scroll-strict-margins
+                 #'beginning-of-visual-line
+               #'beginning-of-line))
+    (point)))
+
+(defun smooth-scroll-count-lines (start end)
+  "Return number of (logical/visual) lines between START and END.
+
+If `smooth-scroll-strict-margins' is non-nil, this counts visual
+lines. Otherwise it counts logical lines.
+
+If END is less than START, this returns zero, so it is important
+to pass them in order."
+  (if (< end start)
+      0
+    (funcall (if smooth-scroll-strict-margins
+                 #'count-screen-lines
+               #'count-lines)
+             start end)))
+
+(defun smooth-scroll-lines-above-point ()
+  "Return the number of lines in window above point.
+
+This does not include the line that point is on."
+  (smooth-scroll-count-lines (window-start)
+                             (smooth-scroll-line-beginning-position)))
+
+(defun smooth-scroll-lines-below-point ()
+  "Return the number of lines in window above point.
+
+This does not include the line that point is on."
+  ;; We don't rely on `window-end' because if we are scrolled near the
+  ;; end of the buffer, it will only give the number of lines
+  ;; remaining in the file, not the number of lines to the bottom of
+  ;; the window.
+  (- (window-height) 2 (smooth-scroll-lines-above-point)))
+
+(defun smooth-scroll-window-allowed-margin ()
+  "Return the maximum allowed margin above or below point.
+
+This only matters for windows whose height is
+`smooth-scroll-margin' * 2 lines or less."
+  ;; We subtract 1 for the modeline, which is counted in
+  ;; `window-height', and one more for the line that point is on. Then
+  ;; we divide by 2, rouding down.
+  (/ (- (window-height) 2) 2))
+
+;;;_ + main function
+(defun do-smooth-scroll ()
+  "Ensure that point is not to close to window edges.
+
+This function scrolls the window until there are at least
+`smooth-scroll-margin' lines between the point and both the top
+and bottom of the window. If this is not possible because the
+window is too small, th window is scrolled such that the point is
+roughly centered within the window."
   (interactive)
-  (cond ((>= (window-start) (point))
-         ;; In this case, count-screen-lines would return 0, or
-         ;; error, so we override.
-         1)
-        (smooth-scroll-strict-margins
-         (count-screen-lines (window-start) (point) 'count-final-newline))
-        (t
-         (count-lines (window-start) (point)))))
+  (when smooth-scrolling-mode
+    (let* ((desired-margin
+            ;; For short windows, we reduce `smooth-scroll-margin' to
+            ;; half the window height minus 1.
+            (min (smooth-scroll-window-allowed-margin)
+                 smooth-scroll-margin))
+           (upper-margin (smooth-scroll-lines-above-point))
+           (lower-margin (smooth-scroll-lines-below-point)))
+      (smooth-scroll-ignore-scroll-errors
+        (cond
+         ((< upper-margin desired-margin)
+          (save-excursion
+            (dotimes (i (- desired-margin upper-margin))
+              (scroll-down 1))))
+         ((< lower-margin desired-margin)
+          (save-excursion
+            (dotimes (i (- desired-margin lower-margin))
+              (scroll-up 1)))))))))
+
+;;;_ + advice setup
 
 ;;;###autoload
-(defun smooth-scroll-lines-from-window-bottom ()
-  "Work out, using the function indicated by
-`smooth-scroll-strict-margins', how many screen lines there are
-between the point and the bottom of the window.  Counting starts
-with 1 referring to the bottom line in the window."
-  (interactive)
-  (cond ((<= (window-end) (point))
-         ;; In this case, count-screen-lines would return 0, or
-         ;; error, so we override.
-         1)
-        (smooth-scroll-strict-margins
-         (count-screen-lines (point) (window-end)))
-        (t
-         (count-lines (point) (window-end)))))
-;;;_ + after advice
+(defmacro enable-smooth-scroll-for-function (func)
+  "Define advice on FUNC to do smooth scrolling.
 
-;;;###autoload
-(defun smooth-scroll-down ()
-  "Scroll down smoothly if cursor is within `smooth-scroll-margin'
-lines of the top of the window."
-  (and
-   ;; Only scroll down if there is buffer above the start of the window.
-   (> (line-number-at-pos (window-start)) 1)
-   (let ((lines-from-window-top
-          (smooth-scroll-lines-from-window-top)))
-     (and
-      ;; [GitHub Issue #5] Keyboard macros execute in interactive mode so
-      ;; we need to be careful not to do anything.
-      (not executing-kbd-macro)
-      ;; Only scroll down if we're within the top margin
-      (<= lines-from-window-top smooth-scroll-margin)
-      ;; Only scroll down if we're in the top half of the window
-      (<= lines-from-window-top
-          ;; N.B. `window-height' includes modeline, so if it returned 21,
-          ;; that would mean exactly 10 lines in the top half and 10 in
-          ;; the bottom.  22 (or any even number) means there's one in the
-          ;; middle.  In both cases the following expression will
-          ;; yield 10:
-          (/ (1- (window-height)) 2))
-      (save-excursion
-        (scroll-down
-              (1+ (- smooth-scroll-margin lines-from-window-top))))))))
+This adds after advice with name `smooth-scroll' to FUNC.
 
-;;;###autoload
-(defun smooth-scroll-up ()
-  "Scroll up smoothly if cursor is within `smooth-scroll-margin'
-lines of the bottom of the window."
-  (and
-   ;; [GitHub Issue #5] Keyboard macros execute in interactive mode so
-   ;; we need to be careful not to do anything.
-   (not executing-kbd-macro)
-   ;; Only scroll up if there is buffer below the end of the window.
-   (< (window-end) (buffer-end 1))
-   (let ((lines-from-window-bottom
-          (smooth-scroll-lines-from-window-bottom)))
-     (and
-      ;; Only scroll up if we're within the bottom margin
-      (<= lines-from-window-bottom smooth-scroll-margin)
-      ;; Only scroll up if we're in the bottom half of the window.
-      (<= lines-from-window-bottom
-          ;; See above notes on `window-height'.
-          (/ (1- (window-height)) 2))
-      (save-excursion
-        (scroll-up
-         (1+ (- smooth-scroll-margin lines-from-window-bottom))))))))
+Note that the advice will not have an effect unless
+`smooth-scrolling-mode' is enabled."
+  `(defadvice ,func (after smooth-scroll activate)
+     "Do smooth scrolling after command finishes.
 
-;;;###autoload
-(defadvice previous-line (after smooth-scroll-down
-                            (&optional arg try-vscroll)
-                            activate)
-  (smooth-scroll-down))
+This advice only has an effect when `smooth-scrolling-mode' is
+enabled. See `smooth-scrolling-mode' for details. To remove this
+advice, use `disable-smooth-scroll-for-function'."
+     (do-smooth-scroll)))
 
-;;;###autoload
-(defadvice next-line (after smooth-scroll-up
-                            (&optional arg try-vscroll)
-                            activate)
-  (smooth-scroll-up))
+(defmacro disable-smooth-scroll-for-function (func)
+  "Delete smooth-scroll advice for FUNC."
+  ;; This doesn't actually need to be a macro, but it is one for
+  ;; consistency with the enabling macro.  Errors are ignored in case
+  ;; the advice has already been removed.
+  `(ignore-errors
+     (ad-remove-advice ',func 'after 'smooth-scroll)
+     (ad-activate ',func)))
 
-;;;###autoload
-(defadvice isearch-repeat (after isearch-smooth-scroll
-                                 (direction)
-                                 activate)
-  (if (eq direction 'forward)
-      (smooth-scroll-up)
-    (smooth-scroll-down)))
-
-;;;###autoload
 (progn
-  (setq scroll-margin 0)
-  (setq redisplay-dont-pause t))
+  (enable-smooth-scroll-for-function previous-line)
+  (enable-smooth-scroll-for-function next-line)
+  (enable-smooth-scroll-for-function isearch-repeat))
 
 ;;;_ + provide
 (provide 'smooth-scrolling)
