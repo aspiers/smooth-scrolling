@@ -23,8 +23,9 @@ for the gory details.
 Put somewhere on your <tt>load-path</tt> and include
 ```
    (require 'smooth-scrolling)
+   (smooth-scrolling-mode 1)
 ```
- in your initialization file.
+in your initialization file. To turn it on or off, use `M-x smooth-scrolling-mode`.
  
 ## Notes
 This only affects the behaviour of the <tt>next-line</tt> and
