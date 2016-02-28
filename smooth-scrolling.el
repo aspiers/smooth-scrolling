@@ -4,7 +4,9 @@
 ;;
 ;; Filename: smooth-scrolling.el
 ;; Description: Make emacs scroll smoothly
-;; Author: Adam Spiers <emacs-ss@adamspiers.org>, Jeremy Bondeson <jbondeson@gmail.com>
+;; Author: Adam Spiers <emacs-ss@adamspiers.org>
+;;         Jeremy Bondeson <jbondeson@gmail.com>
+;;         Ryan C. Thompson <rct+github@thompsonclan.org>
 ;; Maintainer: Adam Spiers <emacs-ss@adamspiers.org>
 ;; Homepage: http://github.com/aspiers/smooth-scrolling/
 ;; Version: 1.0.4
