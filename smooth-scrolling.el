@@ -63,14 +63,6 @@
 
 ;; See the README.md for more details.
 
-;;; TODO:
-;;
-;; - Maybe add option to avoid scroll jumps when point is within
-;;   margin.
-;;
-;; - Minimize the number of autoloads in the file.  Currently
-;;   everything is marked as such.
-
 ;;; Change Log:
 ;; [DATE] -- [VERSION]
 ;;      * Converted to global minor mode "smooth-scrolling-mode". This

@@ -79,6 +79,12 @@ cause some slight confusion at first, but hopefully it is justified by
 the benefit of automatically ensuring `smooth-scroll-margin` lines of
 context are visible around the point as often as possible.
 
+## TODO
+
+-   Maybe add option to avoid scroll jumps when point is within margin.
+-   Minimize the number of autoloads in the file.  Currently
+    everything is marked as such.
+
 ## Authors
 
 Originally written by Adam Spiers, it was made into a proper ELPA
