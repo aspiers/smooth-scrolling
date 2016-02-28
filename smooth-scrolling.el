@@ -1,6 +1,6 @@
 ;;; smooth-scrolling.el --- Make emacs scroll smoothly
 ;;
-;; Copywrite (c) 2007-2013 Adam Spiers
+;; Copyright (c) 2007-2016 Adam Spiers
 ;;
 ;; Filename: smooth-scrolling.el
 ;; Description: Make emacs scroll smoothly
