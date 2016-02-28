@@ -78,3 +78,12 @@ lines in order to keep the point outside the margin.  This jump may
 cause some slight confusion at first, but hopefully it is justified
 by the benefit of automatically ensuring `smooth-scroll-margin`
 lines of context are visible around the point as often as possible.
+
+## Authors
+
+Originally written by Adam Spiers, it was made into a proper ELPA
+package by Jeremy Bondeson, and later converted into a minor mode by
+Ryan C. Thompson.
+
+Thanks also to Mark Hulme-Jones and consolers on #emacs for helping
+debug issues with line-wrapping in the original implementation.

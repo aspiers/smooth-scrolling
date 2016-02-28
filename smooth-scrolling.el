@@ -92,11 +92,6 @@
 ;; - Minimize the number of autoloads in the file.  Currently
 ;;   everything is marked as such.
 
-;;; Acknowledgements:
-
-;; Thanks to Mark Hulme-Jones and consolers on #emacs for helping
-;; debug issues with line-wrapping.
-
 ;;; Change Log:
 ;; [DATE] -- [VERSION]
 ;;      * Converted to global minor mode "smooth-scrolling-mode". This
