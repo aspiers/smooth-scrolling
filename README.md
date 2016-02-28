@@ -60,24 +60,24 @@ navigation keys to be bound to dedicated
 
 ## Notes
 
-This only affects the behaviour of the `next-line` and
-`previous-line` functions, usually bound to the cursor keys and
-`C-n`/`C-p`, and repeated isearches (`isearch-repeat`).  Other methods
-of moving the point will behave as normal according to the standard
-custom variables.
+This only affects the behaviour of the `next-line` and `previous-line`
+functions, usually bound to the cursor keys and `C-n`/`C-p`, and
+repeated isearches (`isearch-repeat`).  Other methods of moving the
+point will behave as normal according to the standard custom
+variables.
 
-Prefix arguments to `next-line` and `previous-line` are
-honored. The minimum number of lines are scrolled in order to keep the
-point outside the margin.
+Prefix arguments to `next-line` and `previous-line` are honored. The
+minimum number of lines are scrolled in order to keep the point
+outside the margin.
 
-There is one case where moving the point in this fashion may cause
-a jump: if the point is placed inside one of the margins by another
+There is one case where moving the point in this fashion may cause a
+jump: if the point is placed inside one of the margins by another
 method (e.g. left mouse click, or `M-x goto-line`) and then moved in
 the normal way, the advice code will scroll the minimum number of
 lines in order to keep the point outside the margin.  This jump may
-cause some slight confusion at first, but hopefully it is justified
-by the benefit of automatically ensuring `smooth-scroll-margin`
-lines of context are visible around the point as often as possible.
+cause some slight confusion at first, but hopefully it is justified by
+the benefit of automatically ensuring `smooth-scroll-margin` lines of
+context are visible around the point as often as possible.
 
 ## Authors
 
