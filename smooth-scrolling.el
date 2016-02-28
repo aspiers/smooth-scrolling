@@ -9,14 +9,14 @@
 ;;         Ryan C. Thompson <rct+github@thompsonclan.org>
 ;; Maintainer: Adam Spiers <emacs-ss@adamspiers.org>
 ;; Homepage: http://github.com/aspiers/smooth-scrolling/
-;; Version: 1.0.4
+;; Version: 2.0.0
 ;; Keywords: convenience
 ;; GitHub: http://github.com/aspiers/smooth-scrolling/
 
 ;; This file is not part of GNU Emacs
 
 ;;; License:
-;; 
+;;
 ;; This program is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License
 ;; as published by the Free Software Foundation; either version 2
@@ -66,7 +66,7 @@
 ;; See the README.md for more details.
 
 ;;; Change Log:
-;; [DATE] -- [VERSION]
+;; 27 Feb 2016 -- v2.0.0
 ;;      * Converted to global minor mode "smooth-scrolling-mode". This
 ;;        means that simply loading the file no longer enables smooth
 ;;        scrolling; you must also enable the mode.
