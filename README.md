@@ -30,12 +30,25 @@ probably did more to confuse than enlighten.
 
 ## Installation
 
-Put somewhere on your `load-path` and include
+You have various options, including the following:
+
+*   Install the [package](https://melpa.org/#/smooth-scrolling)
+    from [MELPA](https://melpa.org/#/getting-started)
+    (see this [friendly quickstart guide](http://ergoemacs.org/emacs/emacs_package_system.html))
+*   Install via [`el-get`](https://github.com/dimitri/el-get/blob/master/README.md)
+*   Simply download this repository and place the elisp file
+    somewhere on your [`load-path`](https://www.emacswiki.org/emacs/LoadPath).
+
+## Usage
+
+To interactively toggle the mode on / off:
+
+    M-x smooth-scrolling-mode
+
+To make the mode permanent, put this in your .emacs:
 
     (require 'smooth-scrolling)
     (smooth-scrolling-mode 1)
-in your initialization file.  To turn it on or off, use
-`M-x smooth-scrolling-mode`.
 
 ## Notes
 

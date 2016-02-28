@@ -31,6 +31,15 @@
 
 ;;; Commentary:
 
+;; To interactively toggle the mode on / off:
+;;
+;;     M-x smooth-scrolling-mode
+;;
+;; To make the mode permanent, put this in your .emacs:
+;;
+;;     (require 'smooth-scrolling)
+;;     (smooth-scrolling-mode 1)
+;;
 ;; This package offers a global minor mode which make emacs scroll
 ;; smoothly.  It keeps the point away from the top and bottom of the
 ;; current buffer's window in order to keep lines of context around
