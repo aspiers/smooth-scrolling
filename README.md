@@ -50,6 +50,14 @@ To make the mode permanent, put this in your .emacs:
     (require 'smooth-scrolling)
     (smooth-scrolling-mode 1)
 
+## Difference with `smooth-scroll.el`
+
+This package should not be confused with the similarly-named
+[`smooth-scroll.el`](https://www.emacswiki.org/emacs/smooth-scroll.el),
+which has similar goals but takes a different approach, requiring
+navigation keys to be bound to dedicated
+`scroll-{up,down,left,right}-1` functions.
+
 ## Notes
 
 This only affects the behaviour of the `next-line` and
