@@ -285,6 +285,8 @@ advice, use `disable-smooth-scroll-for-function'."
 (progn
   (enable-smooth-scroll-for-function previous-line)
   (enable-smooth-scroll-for-function next-line)
+  (enable-smooth-scroll-for-function dired-previous-line)
+  (enable-smooth-scroll-for-function dired-next-line)
   (enable-smooth-scroll-for-function isearch-repeat))
 
 ;;;_ + provide
