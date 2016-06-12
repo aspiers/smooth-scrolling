@@ -287,7 +287,9 @@ advice, use `disable-smooth-scroll-for-function'."
   (enable-smooth-scroll-for-function next-line)
   (enable-smooth-scroll-for-function dired-previous-line)
   (enable-smooth-scroll-for-function dired-next-line)
-  (enable-smooth-scroll-for-function isearch-repeat))
+  (enable-smooth-scroll-for-function isearch-repeat)
+  (enable-smooth-scroll-for-function scroll-up-command)
+  (enable-smooth-scroll-for-function scroll-down-command))
 
 ;;;_ + provide
 (provide 'smooth-scrolling)
