@@ -226,6 +226,10 @@ This only matters for windows whose height is
   ;; we divide by 2, rouding down.
   (/ (- (window-height) 2) 2))
 
+(defsubst window-is-at-bob-p ()
+  "Returns non-nil if `(window-start)' is 1 (or less)."
+  (<= (window-start) 1))
+
 ;;;_ + main function
 (defun do-smooth-scroll ()
   "Ensure that point is not to close to window edges.
@@ -273,6 +277,31 @@ enabled. See `smooth-scrolling-mode' for details. To remove this
 advice, use `disable-smooth-scroll-for-function'."
      (do-smooth-scroll)))
 
+(defmacro enable-smooth-scroll-for-function-conditionally (func cond)
+  "Define advice on FUNC to do smooth scrolling conditionally.
+
+This adds after advice with name `smooth-scroll' to FUNC. The
+advice runs smooth scrolling if expression COND evaluates to
+true. COND is included within the advice and therefore has access
+to all of FUNC's arguments.
+
+Note that the advice will not have an effect unless
+`smooth-scrolling-mode' is enabled."
+  (declare (indent 1))
+  `(defadvice ,func (after smooth-scroll activate)
+     ,(format "Do smooth scrolling conditionally after command finishes.
+
+Smooth sccrolling will only be performed if the following
+expression evaluates to true after the function has run:
+
+%s
+This advice only has an effect when `smooth-scrolling-mode' is
+enabled. See `smooth-scrolling-mode' for details. To remove this
+advice, use `disable-smooth-scroll-for-function'."
+              (pp-to-string cond))
+     (when ,cond
+       (do-smooth-scroll))))
+
 (defmacro disable-smooth-scroll-for-function (func)
   "Delete smooth-scroll advice for FUNC."
   ;; This doesn't actually need to be a macro, but it is one for
@@ -288,8 +317,10 @@ advice, use `disable-smooth-scroll-for-function'."
   (enable-smooth-scroll-for-function dired-previous-line)
   (enable-smooth-scroll-for-function dired-next-line)
   (enable-smooth-scroll-for-function isearch-repeat)
-  (enable-smooth-scroll-for-function scroll-up-command)
-  (enable-smooth-scroll-for-function scroll-down-command))
+  (enable-smooth-scroll-for-function-conditionally scroll-up-command
+    (not (window-is-at-bob-p)))
+  (enable-smooth-scroll-for-function-conditionally scroll-down-command
+    (not (window-is-at-bob-p))))
 
 ;;;_ + provide
 (provide 'smooth-scrolling)
