@@ -184,7 +184,7 @@ the logical line."
                #'beginning-of-line))
     (point)))
 
-(defun smooth-scroll-count-lines (start end)
+(defun smooth-scroll-count-lines-positive (start end)
   "Return number of (logical/visual) lines between START and END.
 
 If `smooth-scroll-strict-margins' is non-nil, this counts visual
@@ -198,6 +198,18 @@ to pass them in order."
                  #'count-screen-lines
                #'count-lines)
              start end)))
+
+(defun smooth-scroll-count-lines (start end)
+  "Return number of (logical/visual) lines between START and END.
+
+If `smooth-scroll-strict-margins' is non-nil, this counts visual
+lines. Otherwise it counts logical lines.
+
+If END is less than START, this can return a negative number."
+  (if (< end start)
+    (- (smooth-scroll-count-lines-positive end start))
+    (smooth-scroll-count-lines-positive start end)
+    ))
 
 (defun smooth-scroll-lines-above-point ()
   "Return the number of lines in window above point.
