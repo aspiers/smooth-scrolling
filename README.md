@@ -1,5 +1,13 @@
 # `smooth-scrolling.el`
 
+**THIS PACKAGE IS LARGELY UNMAINTAINED.  It is recommended to consider
+other options such the native `M-x pixel-scroll-mode`, available since
+Emacs 26, or alternatives such as [ultra-scroll](https://github.com/jdtsmith/ultra-scroll).**
+
+If you feel there is still value in keeping this package alive, or
+are willing to take over maintainership, please comment in
+<https://github.com/aspiers/smooth-scrolling/issues/34>.
+
 ## About
 
 This package offers a minor mode which make emacs scroll smoothly.  It
